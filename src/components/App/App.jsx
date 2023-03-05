@@ -4,7 +4,8 @@ import { ContactList } from '../ContactList/ContactList';
 import { Filter } from '../Filter/Filter';
 import { ContactForm } from '../ContactForm/ContactForm';
 import css from './App.module.css';
-const initialData = [
+const CONTATCTS = 'contatcts';
+const initialContacts = [
   { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
   { id: nanoid(), name: 'Hermione Kline', number: '443-89-12' },
   { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
@@ -12,9 +13,23 @@ const initialData = [
 ];
 export class App extends Component {
   state = {
-    contacts: initialData,
+    contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const localContact = localStorage.getItem(CONTATCTS);
+    if (localContact !== null) {
+      const tempDate = JSON.parse(localContact);
+      this.setState({ contacts: tempDate });
+    } else {
+      this.setState({ contacts: initialContacts });
+    }
+  }
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(CONTATCTS, JSON.stringify(this.state.contacts));
+    }
+  }
   handleChange = evt => {
     const { name, value } = evt.target;
     this.setState({ [name]: value });
